@@ -12,7 +12,7 @@ request type: POST
 user automatically becomes the owner_id, we can add more owner_id with an array function 
 */
 
-router.post("/create", validateSession, async (req, res) => {
+router.post("/create/:tenantid", validateSession, async (req, res) => {
   try {
     const {
       user_id,
@@ -27,7 +27,7 @@ router.post("/create", validateSession, async (req, res) => {
 
     const unit = new Unit({
       user_id: req.user._id,
-      tenant_id: req.tenant_id,
+      tenant_id: req.params.tenantid,
       address: address,
       city: city,
       state: state,
