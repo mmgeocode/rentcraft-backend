@@ -9,7 +9,7 @@ const PaymentsSchema = new mongoose.Schema({
     },
     tenant_id: {
         type: mongoose.Types.ObjectId,
-        ref: "Tenant",
+        ref: "Unit",
         required: true
     },
     date: {
@@ -17,6 +17,8 @@ const PaymentsSchema = new mongoose.Schema({
     },
     amount: {
         type: Number,
+        ref: "Unit",
+        required: true
     },
     paymentsState: {
         type: String,
