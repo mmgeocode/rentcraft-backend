@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const tenantsController = require("./controllers/tenants.controller");
 const cors = require("cors");
 const userController = require("./controllers/user.controller");
 const unitController = require("./controllers/unit.controller");
@@ -24,11 +25,12 @@ db.once("open", () => {
 app.use(cors());
 
 app.use(express.json());
-
+ 
+app.use("/tenants", tenantsController);
 app.use("/user", userController);
 app.use("/unit", unitController);
+app.use("/payments", paymentsController);
 
-app.use("/payments", paymentsController)
 
 app.listen(PORT, () => {
   console.log(`server is running on port: ${PORT}`);
