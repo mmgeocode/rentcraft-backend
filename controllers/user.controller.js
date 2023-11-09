@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
-const validateSession = require("../middleware/validate-session")
+const validateSession = require("../middleware/validate-session");
 
 /* 
     * Create new login
