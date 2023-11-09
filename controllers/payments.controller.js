@@ -7,6 +7,10 @@ const router = require("express").Router();
 
 const Payments = require("../models/payments.model");
 
+const Tenants = require("../models/tenants.model")
+
+const Unit = require("../models/unit.model")
+
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
@@ -19,15 +23,14 @@ const validateSession = require("../middleware/validate-session")
     * Request: POST
 */
 
-router.post("/create/:tenantid", validateSession, async (req, res) => {
+router.post("/create/:unitid", validateSession, async (req, res) => {
 
     try {
 
         const payment = new Payments({
-            unit_id: req.unit._id,
-            tenant_id: req.params.tenantid,
+            unit_id: req.params.unitid,
+            tenant_id: req.body.tenant_id,
             date: req.body.date,
-            // ! pull rent amount from unit?
             amount: req.body.amount,
             paymentsState: req.body.paymentsState
         })
@@ -123,7 +126,7 @@ router.patch("/update/:id", validateSession, async (req, res) => {
         const id = req.params.id
 
         // ! Do we need additional IDs to update payment?
-        const conditions = { _id: id, tenant_id: req.tenant._id}
+        const conditions = { _id: id }
 
         const data = req.body
 
@@ -143,6 +146,31 @@ router.patch("/update/:id", validateSession, async (req, res) => {
         
     }
 
+})
+
+/* 
+    * query unit id for monthly rent
+    * Endpoint: http://localhost:4000/payments/rent/:unitid
+    * Request: GET
+*/
+
+router.get("/rent/:unitid", validateSession, async (req, res) =>{
+
+    try {
+
+        const unit = await Unit.find({ _id: req.params.unitid })
+
+        // ! FIGURE OUT HOW TO PULL VALUE FROM OBJECT PROPERTY
+
+        const rent = unit.filter((value) => value.monthlyRent >= 0)
+
+        res.status(200).json({ rent: rent, message: "Get unit by id success - need to find rent value" })
+        
+    } catch (error) {
+
+        res.status(500).json({ message: error.message })
+        
+    }
 })
 
 module.exports = router;
