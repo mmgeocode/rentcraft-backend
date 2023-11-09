@@ -2,7 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors")
-const userController = require("./controllers/user.controller")
+const userController = require("./controllers/user.controller") 
+const tenantsController = require("./controllers/tenants.controller")
 
 const mongoose = require("mongoose")
 
@@ -19,7 +20,8 @@ app.use(cors())
 
 app.use(express.json());
 
-app.use("/user", userController)
+app.use("/user", userController) 
+app.use("/tenants", tenantsController)
 
 app.listen(PORT, () => {
     console.log(`server is running on port: ${PORT}`)
