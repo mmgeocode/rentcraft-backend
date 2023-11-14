@@ -3,6 +3,7 @@
 const router = require("express").Router();
 
 const Unit = require("../models/unit.model");
+const User = require("../models/user.model");
 
 const validateSession = require("../middleware/validate-session");
 
@@ -12,7 +13,7 @@ request type: POST
 user automatically becomes the owner_id, we can add more owner_id with an array function 
 */
 
-router.post("/create/:tenantid", validateSession, async (req, res) => {
+router.post("/create", validateSession, async (req, res) => {
   try {
     const {
       user_id,
@@ -27,7 +28,7 @@ router.post("/create/:tenantid", validateSession, async (req, res) => {
 
     const unit = new Unit({
       user_id: req.user._id,
-      tenant_id: req.params.tenantid,
+      tenant_id: tenant_id,
       address: address,
       city: city,
       state: state,
@@ -155,6 +156,23 @@ router.patch("/update/:id", validateSession, async function (req, res) {
       message: "Unit updated",
       unit: unit,
     });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+/* 
+endpoint: http://localhost:4000/unit/view-by-user/:id
+request type: GET
+view all the units a user has 
+*/
+
+router.get("/view-by-user/:id", validateSession, async (req, res) => {
+  try {
+    const user_units = await Unit.find({ user_id: req.params.id });
+    res.json({ message: "Unit found by user:", user_units: user_units });
   } catch (error) {
     res.status(500).json({
       message: error.message,
