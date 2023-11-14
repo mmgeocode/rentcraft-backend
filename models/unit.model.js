@@ -28,7 +28,7 @@ const UnitSchema = new mongoose.Schema({
   },
 
   zip: {
-    type: Number,
+    type: String,
   },
 
   monthlyRent: {
