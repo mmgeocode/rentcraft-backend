@@ -7,170 +7,147 @@ const router = require("express").Router();
 
 const Payments = require("../models/payments.model");
 
-const Tenants = require("../models/tenants.model")
+const Tenants = require("../models/tenants.model");
 
-const Unit = require("../models/unit.model")
+const Unit = require("../models/unit.model");
 
 const bcrypt = require("bcrypt");
 
 const jwt = require("jsonwebtoken");
 
-const validateSession = require("../middleware/validate-session")
+const validateSession = require("../middleware/validate-session");
 
-/* 
-    * Create a payment
-    * Endpoint: http://localhost:4000/payments/create/:tenantid
-    * Request: POST
-*/
+/*
+ * Create a payment
+ * Endpoint: http://localhost:4000/payments/create/:tenantid
+ * Request: POST
+ */
 
 router.post("/create/:unitid", validateSession, async (req, res) => {
+  try {
+    const payment = new Payments({
+      unit_id: req.params.unitid,
+      tenant_id: req.body.tenant_id,
+      user_id: req.user._id,
+      date: req.body.date,
+      amount: req.body.amount,
+      paymentsState: req.body.paymentsState,
+    });
 
-    try {
+    const newPayment = await payment.save();
 
-        const payment = new Payments({
-            unit_id: req.params.unitid,
-            tenant_id: req.body.tenant_id,
-            date: req.body.date,
-            amount: req.body.amount,
-            paymentsState: req.body.paymentsState
-        })
+    res.json({ message: "payment created", message: newPayment });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-        const newPayment = await payment.save()
-
-        res.json({ message: "payment created", message: newPayment})
-        
-    } catch (error) {
-
-        res.status(500).json({ message: error.message })
-        
-    }
-
-})
-
-/* 
-    * Get payment by id
-    * Endpoint: http://localhost:4000/payments/:id
-    * Request: Get
-*/
+/*
+ * Get payment by id
+ * Endpoint: http://localhost:4000/payments/:id
+ * Request: Get
+ */
 
 router.get("/:id", validateSession, async (req, res) => {
+  try {
+    const payment = await Payments.findById({ _id: req.params.id });
 
-    try {
+    res
+      .status(200)
+      .json({ payment: payment, message: "Get payment by id success" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-        const payment = await Payments.findById({ _id: req.params.id })
-
-        res.status(200).json({ payment: payment, message: "Get payment by id success" })
-        
-    } catch (error) {
-        
-        res.status(500).json({ message: error.message })
-
-    }
-
-})
-
-/* 
-    * View unit payment history
-    * Endpoint: http://localhost:4000/payments/unit/:id
-    * Request: GET
-*/
+/*
+ * View unit payment history
+ * Endpoint: http://localhost:4000/payments/unit/:id
+ * Request: GET
+ */
 
 router.get("/unit/:id", validateSession, async (req, res) => {
+  try {
+    const unit_history = await Payments.find({ unit_id: req.params.id });
 
-    try {
+    res.status(200).json({
+      unit_history: unit_history,
+      message: "Get payment history by unit id success",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-        const unit_history = await Payments.find({ unit_id: req.params.id })
-
-        res.status(200).json({ unit_history: unit_history, message: "Get payment history by unit id success" })
-        
-    } catch (error) {
-
-        res.status(500).json({ message: error.message })
-        
-    }
-
-})
-
-/* 
-    * View tenant payment history
-    * Endpoint: http://localhost:4000/payments/tenant/:id
-    * Request: GET
-*/
+/*
+ * View tenant payment history
+ * Endpoint: http://localhost:4000/payments/tenant/:id
+ * Request: GET
+ */
 
 router.get("/tenant/:id", validateSession, async (req, res) => {
+  try {
+    const tenant_history = await Payments.find({ tenant_id: req.params.id });
 
-    try {
+    res.status(200).json({
+      tenant_history: tenant_history,
+      message: "Get tenant payment history success",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-        const tenant_history = await Payments.find({ tenant_id: req.params.id })
-
-        res.status(200).json({ tenant_history: tenant_history, message: "Get tenant payment history success" })
-        
-    } catch (error) {
-
-        res.status(500).json({ message: error.message })
-        
-    }
-
-})
-
-/* 
-    * Update payment
-    * Endpoint: http://localhost:4000/payments/update/:id
-    * Request: PATCH
-*/
+/*
+ * Update payment
+ * Endpoint: http://localhost:4000/payments/update/:id
+ * Request: PATCH
+ */
 
 router.patch("/update/:id", validateSession, async (req, res) => {
+  try {
+    const id = req.params.id;
 
-    try {
+    // ! Do we need additional IDs to update payment?
+    const conditions = { _id: id };
 
-        const id = req.params.id
+    const data = req.body;
 
-        // ! Do we need additional IDs to update payment?
-        const conditions = { _id: id }
+    const options = { new: true };
 
-        const data = req.body
+    const payment = await Payments.findOneAndUpdate(conditions, data, options);
 
-        const options = { new: true }
-
-        const payment = await Payments.findOneAndUpdate(conditions, data, options)
-
-        if (!payment) {
-            throw new Error("Payment can not be found")
-        }
-
-        res.json({ message: "sucessful patch", payment: payment })
-        
-    } catch (error) {
-
-        res.status(500).json({ message: error.message })
-        
+    if (!payment) {
+      throw new Error("Payment can not be found");
     }
 
-})
+    res.json({ message: "sucessful patch", payment: payment });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-/* 
-    * query unit id for monthly rent
-    * Endpoint: http://localhost:4000/payments/rent/:unitid
-    * Request: GET
-*/
+/*
+ * query unit id for monthly rent
+ * Endpoint: http://localhost:4000/payments/rent/:unitid
+ * Request: GET
+ */
 
-router.get("/rent/:unitid", validateSession, async (req, res) =>{
+router.get("/rent/:unitid", validateSession, async (req, res) => {
+  try {
+    const unit = await Unit.find({ _id: req.params.unitid });
 
-    try {
+    // ! FIGURE OUT HOW TO PULL VALUE FROM OBJECT PROPERTY
 
-        const unit = await Unit.find({ _id: req.params.unitid })
+    const rent = unit.filter((value) => value.monthlyRent >= 0);
 
-        // ! FIGURE OUT HOW TO PULL VALUE FROM OBJECT PROPERTY
-
-        const rent = unit.filter((value) => value.monthlyRent >= 0)
-
-        res.status(200).json({ rent: rent, message: "Get unit by id success - need to find rent value" })
-        
-    } catch (error) {
-
-        res.status(500).json({ message: error.message })
-        
-    }
-})
+    res.status(200).json({
+      rent: rent,
+      message: "Get unit by id success - need to find rent value",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;

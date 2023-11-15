@@ -16,7 +16,6 @@ const UnitSchema = new mongoose.Schema({
   address: {
     type: String,
     required: true,
-    unique: true,
   },
 
   city: {
