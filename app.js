@@ -5,7 +5,8 @@ const tenantsController = require("./controllers/tenants.controller");
 const cors = require("cors");
 const userController = require("./controllers/user.controller");
 const unitController = require("./controllers/unit.controller");
-const paymentsController = require("./controllers/payments.controller");
+const paymentsController = require("./controllers/payments.controller"); 
+const contact = require("./controllers/contacts")
 
 const mongoose = require("mongoose");
 
@@ -23,9 +24,9 @@ db.once("open", () => {
 });
 
 app.use(cors());
+app.use(express.json()); 
 
-app.use(express.json());
- 
+app.use("/contact", contact)
 app.use("/tenants", tenantsController);
 app.use("/user", userController);
 app.use("/unit", unitController);
