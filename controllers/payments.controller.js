@@ -10,7 +10,7 @@ const Tenants = require("../models/tenants.model");
 
 const Unit = require("../models/unit.model");
 
-const User = require("../models/user.model")
+const User = require("../models/user.model");
 
 const bcrypt = require("bcrypt");
 
@@ -32,7 +32,7 @@ router.post("/create", validateSession, async (req, res) => {
       user_id: req.user._id,
       date: req.body.date,
       amount: req.body.amount,
-      paymentsState: req.body.paymentsState,
+      paymentState: req.body.paymentState,
     });
 
     const newPayment = await payment.save();
@@ -61,27 +61,23 @@ router.get("/:id", validateSession, async (req, res) => {
   }
 });
 
-/* 
-  * Get all payments to user
-  * Endpoint: http://localhost:4000/payments/user/:id
-  * Request: GET
-*/
+/*
+ * Get all payments to user
+ * Endpoint: http://localhost:4000/payments/user/:id
+ * Request: GET
+ */
 
 router.get("/user/:userid", validateSession, async (req, res) => {
-
   try {
+    const payment = await Payments.find({ user_id: req.user._id });
 
-    const payment = await Payments.find({ user_id: req.user._id })
-
-    res.status(200).json({ payment: payment, message: "Get all payments to user success" })
-    
+    res
+      .status(200)
+      .json({ payment: payment, message: "Get all payments to user success" });
   } catch (error) {
-
     res.status(500).json({ message: error.message });
-
   }
-
-})
+});
 
 /*
  * View unit payment history

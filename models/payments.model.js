@@ -25,7 +25,7 @@ const PaymentsSchema = new mongoose.Schema(
       ref: "Unit",
       required: true,
     },
-    paymentsState: {
+    paymentState: {
       type: String,
     },
     type: {
