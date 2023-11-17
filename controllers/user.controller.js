@@ -157,6 +157,8 @@ router.delete("/delete/:id", validateSession, async (req, res) => {
 
     }
 
-})
+}) 
 
-module.exports = router;
+
+
+  module.exports = router;
