@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const TenantsSchema = new mongoose.Schema({
   user_id: {
     type: mongoose.Types.ObjectId,
-    required: true,
+    required: true, 
   },
 
   firstName: {
