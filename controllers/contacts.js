@@ -22,16 +22,48 @@ let transporter = nodemailer.createTransport({
             text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
     }
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log(error);
-            res.status(500).json({message: 'Error sending email'});
-        } else {
-            console.log('Email sent:'+ info.response);
-            res.status(200).json({message: 'Email sent'});
+    
+
+    //resetting password
+    function resetPassword(email) {
+        try {
+          // Check if email is valid
+          if (!isValidEmail(email)) {
+            throw new Error("Invalid email address");
+          }
+
+          // Send email with password reset link
+          sendPasswordResetEmail(email); 
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                res.status(500).json({message: 'Error sending email'});
+            } else {
+                console.log('Email sent:'+ info.response);
+                res.status(200).json({message: 'Email sent'});
+            }
+        })
+        
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                res.status(500).json({message: 'Error sending email'});
+            } else {
+                console.log('Email sent:'+ info.response);
+                res.status(200).json({message: 'Email sent'});
+            }
+        })
+
+          // Return success message
+          return "Password reset link sent to email";
+        } catch (error) {
+          // Log the error
+          console.error(error);
+          
+          // Return error message
+          return "Password reset failed";
         }
-    })
-    })
+      }
 
-
+    })
 module.exports = router
