@@ -37,6 +37,11 @@ const UnitSchema = new mongoose.Schema({
   unitState: {
     type: String,
   },
+
+  active: {
+    type: Boolean,
+    defaultValue: true,
+  },
 });
 
 module.exports = mongoose.model("Unit", UnitSchema);

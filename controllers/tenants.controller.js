@@ -18,13 +18,14 @@ const validateSession = require("../middleware/validate-session");
 
 router.post("/register", validateSession, async (req, res) => {
   try {
-    const { firstName, lastName, phone, email } = req.body;
+    const { firstName, lastName, phone, email, active } = req.body;
     const tenant = new Tenants({
       user_id: req.user._id,
       firstName: firstName,
       lastName: lastName,
       phone: phone,
       email: email,
+      active: true,
     });
 
     const newTenant = await tenant.save();
