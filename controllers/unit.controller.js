@@ -24,6 +24,7 @@ router.post("/create", validateSession, async (req, res) => {
       zip,
       monthlyRent,
       unitState,
+      active,
     } = req.body;
 
     const unit = new Unit({
@@ -35,6 +36,7 @@ router.post("/create", validateSession, async (req, res) => {
       zip: zip,
       monthlyRent: monthlyRent,
       unitState: unitState,
+      active: true,
     });
     const newUnit = await unit.save();
     res.json({
@@ -132,6 +134,7 @@ router.patch("/update/:id", validateSession, async function (req, res) {
       zip,
       monthlyRent,
       unitState,
+      active,
     } = req.body;
 
     const options = { new: true };
@@ -144,6 +147,7 @@ router.patch("/update/:id", validateSession, async function (req, res) {
       zip,
       monthlyRent,
       unitState,
+      active,
     };
 
     const unit = await Unit.findOneAndUpdate(conditions, data, options);
