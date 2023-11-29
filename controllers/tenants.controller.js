@@ -107,7 +107,7 @@ router.patch("/update/:id", validateSession, async (req, res) => {
 });
 
 /*
- * Delete Tennant Info
+ * Delete Tenant Info
  * Endpoint: http://localhost:4000/tenant/delete/:id
  * Request Type: Patch
  */
