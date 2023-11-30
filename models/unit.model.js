@@ -9,7 +9,7 @@ const UnitSchema = new mongoose.Schema({
   },
 
   tenant_id: {
-    type: mongoose.Types.ObjectId,
+    type: String, //mongoose.Types.ObjectId,
     ref: "Tenants",
   },
 
